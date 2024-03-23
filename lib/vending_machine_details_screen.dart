@@ -23,8 +23,11 @@ class VendingMachineDetailsScreen extends StatelessWidget {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => AddMedicineScreen(machine: machine)),
+                  MaterialPageRoute(
+                    builder: (context) => AddMedicineScreen(machineId: machine.id), // Assuming machine.id is the machine ID
+                  ),
                 );
+
 
               },
               child: Text('Add Medicines'),
