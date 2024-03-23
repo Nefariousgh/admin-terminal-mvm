@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:myapp/add_medicines.dart';
-import 'package:myapp/add_vending_machine.dart';
+import 'package:demo_app/add_medicines.dart';
+import 'package:demo_app/add_vending_machine.dart';
 
 
 void main() {

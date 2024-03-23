@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:myapp/database_service.dart';
+import 'package:demo_app/database_service.dart';
 
  // Replace 'your_app_name' with your actual app name
 
