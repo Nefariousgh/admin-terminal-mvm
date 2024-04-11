@@ -6,33 +6,27 @@ class DatabaseService {
 
   Future<void> addVendingMachine(String name, String location) async {
     try {
-      // Create a new document with the vending machine name as its ID
-      DocumentReference machineRef =
-      vendingMachinesCollection.doc(name);
-
-      // Set the data for the vending machine
-      await machineRef.set({
+      // Add a document to the "vending_machines" collection
+      await vendingMachinesCollection.add({
         'name': name,
         'location': location,
       });
-
-      print('Vending machine added successfully');
     } catch (e) {
       print('Error adding vending machine: $e');
     }
   }
 
-  Future<void> addMedicine(
-      String machineId, String name, double price, int quantity) async {
+  Future<void> addMedicine(String machineId, String name, double price, int quantity) async {
     try {
+      // Get the subcollection reference for the specified vending machine
       final machineRef = vendingMachinesCollection.doc(machineId).collection('medicines');
+
+      // Add a document to the "medicines" subcollection
       await machineRef.add({
         'name': name,
         'price': price,
         'quantity': quantity,
       });
-
-      print('Medicine added successfully');
     } catch (e) {
       print('Error adding medicine: $e');
     }

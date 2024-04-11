@@ -1,5 +1,7 @@
+// add_vending_machine_screen.dart
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'database_service.dart'; // Import your DatabaseService class
 
 class AddVendingMachineScreen extends StatefulWidget {
   @override
@@ -32,10 +34,10 @@ class _AddVendingMachineScreenState extends State<AddVendingMachineScreen> {
             SizedBox(height: 16.0),
             ElevatedButton(
               onPressed: () {
-                FirebaseFirestore.instance.collection('vending_machines').add({
-                  'name': nameController.text,
-                  'location': locationController.text,
-                });
+                DatabaseService().addVendingMachine(
+                  nameController.text,
+                  locationController.text,
+                );
                 Navigator.pop(context);
               },
               child: Text('Add Machine'),

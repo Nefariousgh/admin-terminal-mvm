@@ -2,27 +2,57 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class AddMedicineScreen extends StatefulWidget {
-  final String machineId; // Change the type to String
+  final String machineId;
 
   AddMedicineScreen({required this.machineId});
 
   @override
   _AddMedicineScreenState createState() => _AddMedicineScreenState();
 }
-  @override
-  _AddMedicineScreenState createState() => _AddMedicineScreenState();
 
-
-class _AddMedicineScreenState extends State<AddMedicineScreen> {
+class _AddMedicineScreenState extends State<AddMedicineScreen> with WidgetsBindingObserver {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _priceController = TextEditingController();
   final TextEditingController _quantityController = TextEditingController();
+  bool isEditing = false;
+  late String editingMedicineId;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance?.addObserver(this);
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance?.removeObserver(this);
+    _nameController.dispose();
+    _priceController.dispose();
+    _quantityController.dispose();
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.paused) {
+      // Clear cache when app is paused (backgrounded or closed)
+      clearCache();
+    }
+  }
+
+  Future<void> clearCache() async {
+    try {
+      await FirebaseFirestore.instance.clearPersistence();
+    } catch (e) {
+      print('Error clearing cache: $e');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Add Medicines'),
+        title: Text(isEditing ? 'Edit Medicine' : 'Add Medicines'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -45,9 +75,13 @@ class _AddMedicineScreenState extends State<AddMedicineScreen> {
             ),
             ElevatedButton(
               onPressed: () {
-                _addMedicine();
+                if (isEditing) {
+                  _editMedicine(editingMedicineId);
+                } else {
+                  _addMedicine();
+                }
               },
-              child: Text('Add Medicine'),
+              child: Text(isEditing ? 'Update Medicine' : 'Add Medicine'),
             ),
             SizedBox(height: 20),
             Text(
@@ -72,6 +106,29 @@ class _AddMedicineScreenState extends State<AddMedicineScreen> {
                       return ListTile(
                         title: Text(medicine['name']),
                         subtitle: Text('Price: \$${medicine['price']} | Quantity: ${medicine['quantity']}'),
+                        trailing: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            IconButton(
+                              icon: Icon(Icons.edit),
+                              onPressed: () {
+                                setState(() {
+                                  isEditing = true;
+                                  editingMedicineId = medicine.id;
+                                  _nameController.text = medicine['name'];
+                                  _priceController.text = medicine['price'].toString();
+                                  _quantityController.text = medicine['quantity'].toString();
+                                });
+                              },
+                            ),
+                            IconButton(
+                              icon: Icon(Icons.delete),
+                              onPressed: () {
+                                _deleteMedicine(medicine.id);
+                              },
+                            ),
+                          ],
+                        ),
                       );
                     },
                   );
@@ -107,11 +164,45 @@ class _AddMedicineScreenState extends State<AddMedicineScreen> {
     }
   }
 
-  @override
-  void dispose() {
-    _nameController.dispose();
-    _priceController.dispose();
-    _quantityController.dispose();
-    super.dispose();
+  void _editMedicine(String medicineId) async {
+    String name = _nameController.text;
+    double price = double.parse(_priceController.text);
+    int quantity = int.parse(_quantityController.text);
+
+    try {
+      await FirebaseFirestore.instance
+          .collection('vending_machines')
+          .doc(widget.machineId)
+          .collection('medicines')
+          .doc(medicineId)
+          .update({
+        'name': name,
+        'price': price,
+        'quantity': quantity,
+      });
+      setState(() {
+        isEditing = false;
+        editingMedicineId = '';
+        _nameController.clear();
+        _priceController.clear();
+        _quantityController.clear();
+      });
+    } catch (e) {
+      print('Error editing medicine: $e');
+    }
   }
+
+  void _deleteMedicine(String medicineId) async {
+    try {
+      await FirebaseFirestore.instance
+          .collection('vending_machines')
+          .doc(widget.machineId)
+          .collection('medicines')
+          .doc(medicineId)
+          .delete();
+    } catch (e) {
+      print('Error deleting medicine: $e');
+    }
+  }
+
 }
