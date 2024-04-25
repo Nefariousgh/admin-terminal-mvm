@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class AdminSection extends StatelessWidget {
-  const AdminSection({super.key});
+  const AdminSection({Key? key});
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +26,7 @@ class AdminSection extends StatelessWidget {
 }
 
 class AddVendingMachineScreen extends StatelessWidget {
-  const AddVendingMachineScreen({super.key});
+  const AddVendingMachineScreen({Key? key});
 
   @override
   Widget build(BuildContext context) {
@@ -34,9 +34,25 @@ class AddVendingMachineScreen extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Add Vending Machine'),
       ),
-      body: const Center(
-        // Add form fields to enter vending machine details
-        child: Text('Add Vending Machine Form'),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            TextField(
+              decoration: InputDecoration(labelText: 'Machine Name'),
+            ),
+            TextField(
+              decoration: InputDecoration(labelText: 'Location'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                // Add logic to save vending machine details
+              },
+              child: const Text('Save'),
+            ),
+          ],
+        ),
       ),
     );
   }

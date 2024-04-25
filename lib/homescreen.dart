@@ -8,19 +8,10 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Vending Machines'),
+        title: Text('Vending Machines', textAlign: TextAlign.center),
       ),
       body: Column(
         children: [
-          ElevatedButton(
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => AddVendingMachineScreen()),
-              );
-            },
-            child: Text('Add Vending Machine'),
-          ),
           Expanded(
             child: StreamBuilder(
               stream: FirebaseFirestore.instance.collection('vending_machines').snapshots(),
@@ -29,8 +20,19 @@ class HomeScreen extends StatelessWidget {
                   return Center(child: CircularProgressIndicator());
                 }
                 return ListView.builder(
-                  itemCount: snapshot.data!.docs.length,
+                  itemCount: snapshot.data!.docs.length + 1,
                   itemBuilder: (context, index) {
+                    if (index == snapshot.data!.docs.length) {
+                      return ElevatedButton(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => AddVendingMachineScreen()),
+                          );
+                        },
+                        child: Text('Add Vending Machine'),
+                      );
+                    }
                     var machine = snapshot.data!.docs[index];
                     return GestureDetector(
                       onTap: () {
@@ -66,10 +68,14 @@ class MachineDetailsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(machine['name']),
+        title: Text(machine['name'], textAlign: TextAlign.center),
       ),
       body: Column(
         children: [
+          ListTile(
+            title: Text('Machine Name: ${machine['name']}'),
+            subtitle: Text('Location: ${machine['location']}'),
+          ),
           ElevatedButton(
             onPressed: () {
               Navigator.push(
@@ -78,8 +84,6 @@ class MachineDetailsScreen extends StatelessWidget {
                   builder: (context) => AddMedicineScreen(machineId: machine.id), // Pass machine.id as machineId
                 ),
               );
-
-
             },
             child: Text('Add Medicines'),
           ),

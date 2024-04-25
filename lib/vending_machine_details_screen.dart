@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import 'add_medicine_screen.dart';
@@ -17,20 +16,6 @@ class MachineDetailsScreen extends StatelessWidget {
       ),
       body: Column(
         children: [
-          ElevatedButton(
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => AddMedicineScreen(machineId: machine.id)),
-              );
-            },
-            child: Text('Add Medicine'),
-          ),
-          SizedBox(height: 20),
-          Text(
-            'Added Medicines:',
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-          ),
           Expanded(
             child: StreamBuilder(
               stream: FirebaseFirestore.instance
@@ -56,14 +41,58 @@ class MachineDetailsScreen extends StatelessWidget {
                             icon: Icon(Icons.edit),
                             onPressed: () {
                               // Implement update quantity functionality
-                              // You can use a dialog or another screen for updating the quantity
+                              showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return AlertDialog(
+                                    title: Text('Update Quantity'),
+                                    content: TextField(
+                                      controller: TextEditingController(text: medicine['quantity'].toString()),
+                                      keyboardType: TextInputType.number,
+                                      decoration: InputDecoration(labelText: 'New Quantity'),
+                                    ),
+                                    actions: [
+                                      TextButton(
+                                        onPressed: () {
+                                          // Update quantity logic
+                                          Navigator.pop(context);
+                                        },
+                                        child: Text('Update'),
+                                      ),
+                                    ],
+                                  );
+                                },
+                              );
                             },
                           ),
                           IconButton(
                             icon: Icon(Icons.delete),
                             onPressed: () {
                               // Implement delete medicine functionality
-                              // You can show a confirmation dialog before deleting
+                              showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return AlertDialog(
+                                    title: Text('Confirm Delete'),
+                                    content: Text('Are you sure you want to delete this medicine?'),
+                                    actions: [
+                                      TextButton(
+                                        onPressed: () {
+                                          // Delete logic
+                                          Navigator.pop(context);
+                                        },
+                                        child: Text('Delete'),
+                                      ),
+                                      TextButton(
+                                        onPressed: () {
+                                          Navigator.pop(context);
+                                        },
+                                        child: Text('Cancel'),
+                                      ),
+                                    ],
+                                  );
+                                },
+                              );
                             },
                           ),
                         ],
@@ -73,6 +102,16 @@ class MachineDetailsScreen extends StatelessWidget {
                 );
               },
             ),
+          ),
+          SizedBox(height: 20),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => AddMedicineScreen(machineId: machine.id)),
+              );
+            },
+            child: Text('Add Medicine'),
           ),
         ],
       ),

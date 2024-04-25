@@ -10,43 +10,12 @@ class AddMedicineScreen extends StatefulWidget {
   _AddMedicineScreenState createState() => _AddMedicineScreenState();
 }
 
-class _AddMedicineScreenState extends State<AddMedicineScreen> with WidgetsBindingObserver {
+class _AddMedicineScreenState extends State<AddMedicineScreen> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _priceController = TextEditingController();
   final TextEditingController _quantityController = TextEditingController();
   bool isEditing = false;
   late String editingMedicineId;
-
-  @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance?.addObserver(this);
-  }
-
-  @override
-  void dispose() {
-    WidgetsBinding.instance?.removeObserver(this);
-    _nameController.dispose();
-    _priceController.dispose();
-    _quantityController.dispose();
-    super.dispose();
-  }
-
-  @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state == AppLifecycleState.paused) {
-      // Clear cache when app is paused (backgrounded or closed)
-      clearCache();
-    }
-  }
-
-  Future<void> clearCache() async {
-    try {
-      await FirebaseFirestore.instance.clearPersistence();
-    } catch (e) {
-      print('Error clearing cache: $e');
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -204,5 +173,4 @@ class _AddMedicineScreenState extends State<AddMedicineScreen> with WidgetsBindi
       print('Error deleting medicine: $e');
     }
   }
-
 }

@@ -8,7 +8,11 @@ class VendingMachinesListScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Vending Machines'),
+        title: Text(
+          'Vending Machines',
+          style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold), // Bigger and bold title
+        ),
+        centerTitle: true, // Center the title
       ),
       body: StreamBuilder(
         stream: FirebaseFirestore.instance.collection('vending_machines').snapshots(),
@@ -30,8 +34,6 @@ class VendingMachinesListScreen extends StatelessWidget {
                       builder: (context) => AddMedicineScreen(machineId: machine.id), // Assuming machine.id is the machine ID
                     ),
                   );
-
-
                 },
               );
             },
@@ -47,6 +49,7 @@ class VendingMachinesListScreen extends StatelessWidget {
         },
         child: Icon(Icons.add),
       ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat, // Center the FAB
     );
   }
 }
