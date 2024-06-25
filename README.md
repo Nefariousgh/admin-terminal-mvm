@@ -1,4 +1,4 @@
-# admin-Application
+# Admin-Application
 ## Overview
 
 The Vending Machine App is a Flutter-based application that allows administrators to manage vending machines and their inventory. Users can view vending machines, check details, and add items to the machines.
